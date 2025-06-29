@@ -1,27 +1,14 @@
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { SafeAreaView, StyleSheet} from 'react-native'
-import React, { useEffect, useState } from 'react'
-import LoginStack from './src/navigation/LoginStack'
-import HomeScreen from './src/screens/DrawerNavigation'
-import { NavigationContainer } from '@react-navigation/native'
-import RootNavigation from './src/navigation/RootNavigation'
-// const store = createStoreHook(rootReducer)
+import {  StyleSheet} from 'react-native'
+import React, {  useState } from 'react'
+import { Provider } from 'react-redux'
+import configureStore from './src/redux/store'
+import Entry from './src/screens/Entry'
+const {store} = configureStore()
 const App = () => {
-  const [loggedIn,setIsLoggedIn] = useState(false)
-
   return (
-    // <Provider store={store}>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-    <SafeAreaView style={{flex:1}}>
-      
-      <NavigationContainer>
-   {loggedIn?<RootNavigation/>:<LoginStack setIsLoggedIn={setIsLoggedIn}/>}
-
-   </NavigationContainer>
-   
-   </SafeAreaView>
-   </GestureHandlerRootView>
-     // </Provider>
+    <Provider store={store}>
+    <Entry/>
+     </Provider>
   )
 }
 

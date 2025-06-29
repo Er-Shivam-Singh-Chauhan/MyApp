@@ -9,6 +9,8 @@ import Theme from '../../Utilities/Theme';
 import { storeItem } from '../../Utilities/AsyncUtils';
 import Strings from '../../Utilities/Strings';
 import CustomInputBox from '../../components/CustomInputBox';
+import { useDispatch } from 'react-redux';
+import { changeNavigator } from '../../redux/actions/appStackActions';
 const LoginScreen = ({ setIsLoggedIn }) => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -16,6 +18,7 @@ const LoginScreen = ({ setIsLoggedIn }) => {
   const [userNameError, setUserNameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [showpassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   //The function to handle login with all the validations
   const onClickLogin = async () => {
@@ -36,8 +39,9 @@ const LoginScreen = ({ setIsLoggedIn }) => {
     }
     //check if all the fields are filled then save the data to async storage and navigate to audit form screen
     if (userName && password && roleType) {
+      Toast.show('Login successful.', Toast.SHORT);
       await storeItem(Strings.USER_DATA, { userName, password, roleType });
-      setIsLoggedIn(true);
+      dispatch(changeNavigator(true));
       // navigation.navigate('HomeScreen');
     }
   };

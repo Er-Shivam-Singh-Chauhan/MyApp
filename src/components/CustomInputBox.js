@@ -31,7 +31,7 @@ const CustomInputBox = ({
         value={text}
         onChangeText={onChange}
         secureTextEntry={!showPassword}
-        style={{ ...styles.input, ...customStyles }}
+        style={{ ...styles.inputBox, ...customStyles }}
       />
       {showEyeIcon && (
         <TouchableOpacity
@@ -58,7 +58,10 @@ const CustomInputBox = ({
 export default CustomInputBox;
 
 const styles = StyleSheet.create({
-  inputBox: {},
+  inputBox: {
+    color: Theme.BLACK,
+    width: '80%',
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -1,0 +1,5 @@
+import { combineReducers } from 'redux';
+import NavigationReducer from './reducers/NavigationReducer';
+export default combineReducers({
+    NavigationReducer
+});

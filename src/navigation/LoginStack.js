@@ -4,15 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createStaticNavigation } from '@react-navigation/native';
 import LoginScreen from '../screens/LoginScreen';
 
-const LoginStack = props => {
+const LoginStack = () => {
   const Stack = createNativeStackNavigator();
-  console.log('props', props);
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
       initialRouteName="Login"
     >
-      <Stack.Screen name="Login" component={() => <LoginScreen {...props} />} />
+      <Stack.Screen name="Login" component={() => <LoginScreen />} />
     </Stack.Navigator>
   );
 };

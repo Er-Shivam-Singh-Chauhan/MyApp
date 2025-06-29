@@ -14,7 +14,7 @@ const RootNavigation = () => {
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="DrawerNavigation"
+      initialRouteName="AuditFormScreen"
     >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
