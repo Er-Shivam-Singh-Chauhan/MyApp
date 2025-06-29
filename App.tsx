@@ -1,28 +1,32 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaView, StyleSheet} from 'react-native'
+import React, { useEffect, useState } from 'react'
+import LoginStack from './src/navigation/LoginStack'
+import HomeScreen from './src/screens/DrawerNavigation'
+import { NavigationContainer } from '@react-navigation/native'
+import RootNavigation from './src/navigation/RootNavigation'
+// const store = createStoreHook(rootReducer)
+const App = () => {
+  const [loggedIn,setIsLoggedIn] = useState(false)
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NewAppScreen templateFileName="App.tsx" />
-    </View>
-  );
+    // <Provider store={store}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex:1}}>
+      
+      <NavigationContainer>
+   {loggedIn?<RootNavigation/>:<LoginStack setIsLoggedIn={setIsLoggedIn}/>}
+
+   </NavigationContainer>
+   
+   </SafeAreaView>
+   </GestureHandlerRootView>
+     // </Provider>
+  )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+export default App
 
-export default App;
+const styles = StyleSheet.create({
+
+})
