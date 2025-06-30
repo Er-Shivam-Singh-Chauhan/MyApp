@@ -1,4 +1,10 @@
-import { Text, View, TextInput, SafeAreaView } from 'react-native';
+import {
+  Text,
+  View,
+  TextInput,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
 import React, { useState } from 'react';
 import styles from './styles';
 import Checkbox from '../../components/RadioButton';
@@ -41,85 +47,113 @@ const LoginScreen = ({ setIsLoggedIn }) => {
     if (userName && password && roleType) {
       Toast.show('Login successful.', Toast.SHORT);
       await storeItem(Strings.USER_DATA, { userName, password, roleType });
+      clearStates();
       dispatch(changeNavigator(true));
-      // navigation.navigate('HomeScreen');
     }
   };
+  //reset all the states
+  const clearStates = () => {
+    setUserName('');
+    setPassword('');
+    setRoleType('');
+  };
+  //navigate to privacy policy screen
+  const gotToPolicyScreen = () => {
+    navigation.navigate('PrivacyPolicy');
+  };
   return (
-    <SafeAreaView style={styles.mainContainer}>
-      <Text style={styles.login}>Login</Text>
-      <TextInput
-        style={styles.inputBox}
-        placeholder="Please enter user name."
-        value={userName}
-        onChangeText={t => {
-          setUserNameError('');
-          setUserName(t);
-        }}
-      />
-      <Text
-        style={{
-          fontSize: 12,
-          lineHeight: 18,
-          color: Theme.ERROR_RED,
-          width: '80%',
-          marginTop: 3,
-        }}
-      >
-        {userNameError}
-      </Text>
-      <CustomInputBox
-        secureTextEntry={!showpassword}
-        showEyeIcon={true}
-        placeholder="Please enter password."
-        value={password}
-        onChangeText={t => {
-          setPasswordError('');
-          setPassword(t);
-        }}
-      />
-      <Text
-        style={{
-          fontSize: 12,
-          lineHeight: 18,
-          color: Theme.ERROR_RED,
-          width: '80%',
-          marginTop: 3,
-        }}
-      >
-        {passwordError}
-      </Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.mainContainer}>
+        <Text style={styles.login}>Login</Text>
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Please enter user name."
+          value={userName}
+          onChangeText={t => {
+            setUserNameError('');
+            setUserName(t);
+          }}
+        />
+        <Text
+          style={{
+            fontSize: 12,
+            lineHeight: 18,
+            color: Theme.ERROR_RED,
+            width: '80%',
+            marginTop: 3,
+          }}
+        >
+          {userNameError}
+        </Text>
+        <CustomInputBox
+          secureTextEntry={!showpassword}
+          showEyeIcon={true}
+          placeholder="Please enter password."
+          value={password}
+          onChangeText={t => {
+            setPasswordError('');
+            setPassword(t);
+          }}
+        />
+        <Text
+          style={{
+            fontSize: 12,
+            lineHeight: 18,
+            color: Theme.ERROR_RED,
+            width: '80%',
+            marginTop: 3,
+          }}
+        >
+          {passwordError}
+        </Text>
 
-      <View
-        style={{ alignSelf: 'flex-start', marginLeft: '10%', marginTop: '5%' }}
-      >
-        <Checkbox
-          title={'Admin'}
-          selected={roleType === 'Admin'}
-          onPress={t => {
-            setRoleType(t);
+        <View
+          style={{
+            alignSelf: 'flex-start',
+            marginLeft: '10%',
+            marginTop: '5%',
           }}
-        />
-        <Checkbox
-          title={'Auditor'}
-          selected={roleType === 'Auditor'}
-          onPress={t => {
-            setRoleType(t);
-          }}
-        />
-        <Checkbox
-          title={'Viewer'}
-          selected={roleType === 'Viewer'}
-          onPress={t => {
-            setRoleType(t);
-          }}
-        />
-        <CustomButton
-          label={'Login'}
+        >
+          <Checkbox
+            title={'Admin'}
+            selected={roleType === 'Admin'}
+            onPress={t => {
+              setRoleType(t);
+            }}
+          />
+          <Checkbox
+            title={'Auditor'}
+            selected={roleType === 'Auditor'}
+            onPress={t => {
+              setRoleType(t);
+            }}
+          />
+          <Checkbox
+            title={'Viewer'}
+            selected={roleType === 'Viewer'}
+            onPress={t => {
+              setRoleType(t);
+            }}
+          />
+          <CustomButton
+            label={'Login'}
+            onPress={() => {
+              onClickLogin();
+            }}
+            customeStyles={{ borderWidth: 0 }}
+            fontStyle={{ color: Theme.WHITE }}
+          />
+        </View>
+      </View>
+      <View style={styles.privacyPolicyContainer}>
+        <Text
+          style={styles.privacyPolicy}
           onPress={() => {
-            onClickLogin();
+            gotToPolicyScreen();
           }}
-        />
+        >
+          Privacy Policy
+        </Text>
       </View>
     </SafeAreaView>
   );

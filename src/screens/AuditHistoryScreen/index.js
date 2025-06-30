@@ -14,24 +14,28 @@ import { getItem, storeItem } from '../../Utilities/AsyncUtils';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Strings from '../../Utilities/Strings';
 import { useNavigation } from '@react-navigation/native';
+import styles from './styles';
 
 const AuditHistoryScreen = () => {
   const [audits, setAudits] = useState([]);
   const [roleType, setRoleType] = useState('');
   const navigation = useNavigation();
+  //This will be called when the component mounts to get all audits and roletype
   useEffect(() => {
     getAudits();
     getRoleType();
   }, []);
-
+  //getRoleType() => This will be called when the component mounts and this will get the user role type from async storage
   const getRoleType = async () => {
     const userData = await getItem(Strings.USER_DATA);
     setRoleType(userData.roleType);
   };
+  //getAudits() => This will be called when the component mounts and this will get all audits from async storage
   const getAudits = async () => {
     const res = await getItem(Strings.AUDIT_DATA);
     setAudits(res);
   };
+  //deleteAuditPrompt() => This will prompt the user to delete any audit
   const deleteAuditPrompt = id => {
     Alert.alert(
       'Delete Audit',
@@ -39,7 +43,7 @@ const AuditHistoryScreen = () => {
       [
         {
           text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
+          onPress: () => {},
           style: 'cancel',
         },
         {
@@ -52,12 +56,14 @@ const AuditHistoryScreen = () => {
       { cancelable: false },
     );
   };
+  //deleteAudit() => This will be called when the user clicks on the delete button on alert to delete any audit
   const deleteAudit = async id => {
     const res = await getItem(Strings.AUDIT_DATA);
     const filtered = res.filter(item => item.id !== id);
     await storeItem(Strings.AUDIT_DATA, filtered);
     setAudits(filtered);
   };
+  //renderItem() => This is the block to render each audit on screen and wrapped inside useCallback to optimize performance
   const renderItem = useCallback(
     ({ item, index }) => {
       return (
@@ -120,10 +126,7 @@ const AuditHistoryScreen = () => {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <TouchableOpacity
-        style={{
-          alignSelf: 'flex-start',
-          marginLeft: 20,
-        }}
+        style={styles.backButton}
         onPress={() => {
           navigation.goBack();
         }}
@@ -135,19 +138,13 @@ const AuditHistoryScreen = () => {
       <FlatList
         showsVerticalScrollIndicator={false}
         data={audits}
-        style={{ width: '100%' }}
+        style={styles.FlatListContainer}
         renderItem={renderItem}
         contentContainerStyle={audits.length === 0 && { flex: 1 }}
         initialNumToRender={5}
         windowSize={3}
         ListEmptyComponent={
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              flex: 1,
-            }}
-          >
+          <View style={styles.noDataContainer}>
             <Text style={styles.noData}>No audit records found</Text>
           </View>
         }
@@ -157,75 +154,3 @@ const AuditHistoryScreen = () => {
 };
 
 export default AuditHistoryScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: Theme.WHITE,
-    alignItems: 'center',
-  },
-  heading: {
-    fontSize: 24,
-    lineHeight: 42,
-    fontWeight: '600',
-    color: Theme.SECONDARY_BLUE,
-    textAlign: 'center',
-  },
-  noData: {
-    fontSize: 14,
-    lineHeight: 18,
-    fontWeight: '300',
-    color: Theme.GREY,
-  },
-  container: {
-    backgroundColor: Theme.WHITE,
-    borderColor: Theme.GREY,
-    borderWidth: 1,
-    elevation: 2,
-    borderRadius: 4,
-    margin: 14,
-    // padding: 10,
-    shadowColor: Theme.BLACK,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  title: {
-    fontSize: 14,
-    lineHeight: 18,
-    marginTop: 10,
-    fontWeight: '600',
-    color: Theme.SECONDARY_BLUE,
-  },
-  divider: {
-    borderBottomWidth: 1,
-    borderColor: Theme.GREY,
-    // marginVertical: 8,
-  },
-  comment: {
-    fontSize: 12,
-    lineHeight: 18,
-    fontWeight: '350',
-    color: Theme.BLACK,
-    // marginTop: 8,
-    // marginHorizontal: 5,
-  },
-  block: {
-    marginVertical: 8,
-  },
-  innerView: { padding: 8 },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 8,
-  },
-  deleteButton: {
-    backgroundColor: Theme.LIGHT_GREY,
-    padding: 7,
-    borderRadius: 40,
-  },
-});

@@ -1,8 +1,7 @@
-import { StyleSheet } from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createStaticNavigation } from '@react-navigation/native';
 import LoginScreen from '../screens/LoginScreen';
+import PolicyViewerScreen from '../screens/PolicyViewerScreen';
 
 const LoginStack = () => {
   const Stack = createNativeStackNavigator();
@@ -11,11 +10,10 @@ const LoginStack = () => {
       screenOptions={{ headerShown: false }}
       initialRouteName="Login"
     >
-      <Stack.Screen name="Login" component={() => <LoginScreen />} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="PrivacyPolicy" component={PolicyViewerScreen} />
     </Stack.Navigator>
   );
 };
 
 export default LoginStack;
-
-const styles = StyleSheet.create({});

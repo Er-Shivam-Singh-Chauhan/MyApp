@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+//store value in async storage
 export const storeItem = async (key, item) => {
   try {
     //we want to wait for the Promise returned by AsyncStorage.setItem()
@@ -8,7 +8,7 @@ export const storeItem = async (key, item) => {
     return jsonOfItem;
   } catch (error) {}
 };
-
+//get value from async storage
 export const getItem = async key => {
   try {
     const retrievedItem = await AsyncStorage.getItem(key);
@@ -24,7 +24,7 @@ export const getItem = async key => {
     return null;
   }
 };
-
+//remove value from async storage
 export const removeItem = async key => {
   try {
     const jsonOfItem = await AsyncStorage.removeItem(key);
@@ -33,7 +33,7 @@ export const removeItem = async key => {
   } catch (error) {}
   return;
 };
-
+//reset async storage
 export const clearDB = async () => {
   try {
     const retrievedItem = await AsyncStorage.clear();

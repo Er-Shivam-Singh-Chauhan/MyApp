@@ -1,4 +1,5 @@
 import {
+  Alert,
   Animated,
   Button,
   Dimensions,
@@ -10,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import Theme from '../../Utilities/Theme';
 import Strings from '../../Utilities/Strings';
 import { getItem, removeItem, storeItem } from '../../Utilities/AsyncUtils';
@@ -20,6 +21,10 @@ import CheckBox from '../../components/CheckBox';
 import Toast from 'react-native-simple-toast';
 import { useNavigation } from '@react-navigation/native';
 import uuid from 'react-native-uuid';
+import { useDispatch } from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { resetNavigator } from '../../redux/actions/appStackActions';
+import styles from './styles';
 const Step = ({ children, fadeAnim }) => (
   <Animated.View style={{ ...styles.step, opacity: fadeAnim }}>
     {children}
@@ -28,6 +33,7 @@ const Step = ({ children, fadeAnim }) => (
 const AuditFormScreen = () => {
   const [roleType, setRoleType] = useState('');
   const [step, setStep] = useState(0);
+  const dispatch = useDispatch();
   const [selectedRating, setSelectedRating] = useState('');
   const [comment, setComment] = useState('');
   const navigation = useNavigation();
@@ -47,15 +53,18 @@ const AuditFormScreen = () => {
   const Question1 = 'Which standards or frameworks are you auditing against?';
   const Question2 = 'How would you rate your overall experience?';
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  //This will be called when the component mounts
   useEffect(() => {
     // removeItem(Strings.AUDIT_DATA);
     getRoleType();
   }, []);
+  //getRoleType() => This will be called when the component mounts and this will get the user role type from async storage
   const getRoleType = async () => {
     const userData = await getItem(Strings.USER_DATA);
     setRoleType(userData.roleType);
     setEditable(userData.roleType === 'Auditor');
   };
+  // setAuditOptions() => This will be called when the user clicks on the checkboxes in step 1
   const setAuditOptions = title => {
     setErrors({ ...errors, step1: '' });
     if (auditsSelected.includes(title)) {
@@ -64,6 +73,7 @@ const AuditFormScreen = () => {
       setAuditSelected([...auditsSelected, title]);
     }
   };
+  //submitData() => This will be called when the user clicks on the submit button
   const submitData = async () => {
     if (auditsSelected.length === 0) {
       setErrors(prev => ({
@@ -113,10 +123,12 @@ const AuditFormScreen = () => {
       navigation.navigate('AuditSummary', obj);
     }
   };
+  //setRatings() => This will be called when the user clicks on the radio buttons in step 3
   const setRatings = rating => {
     setErrors({ ...errors, step3: '' });
     setSelectedRating(rating);
   };
+  //These are multi step wizard
   const steps = [
     <Step fadeAnim={fadeAnim} key={0}>
       <Text style={styles.heading}>Question</Text>
@@ -207,7 +219,7 @@ const AuditFormScreen = () => {
       </View>
     </Step>,
   ];
-
+  //animateFadeIn() => fade animation will be called when user clicks on next or previous button
   const animateFadeIn = () => {
     fadeAnim.setValue(0);
     Animated.timing(fadeAnim, {
@@ -216,18 +228,49 @@ const AuditFormScreen = () => {
       useNativeDriver: true,
     }).start();
   };
-
+  //useEffect will be triggered to show animation on every wizard changes
   useEffect(() => {
     animateFadeIn();
   }, [step]);
+  //gotoHistory() => This will be called when the user want to see past audits
   const goToHistory = () => {
     navigation.navigate('AuditHistory');
+    // dispatch(resetNavigator());
+  };
+  //logout() => This will be called when the user want to logout
+  const logout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: () => {
+            dispatch(resetNavigator());
+          },
+        },
+      ],
+      { cancelable: false },
+    );
   };
   const nextStep = () => setStep(prev => Math.min(prev + 1, steps.length - 1));
   const prevStep = () => setStep(prev => Math.max(prev - 1, 0));
 
   return (
     <SafeAreaView style={styles.mainContainer}>
+      <TouchableOpacity
+        style={styles.logout}
+        onPress={() => {
+          logout();
+        }}
+      >
+        <Icon name={'logout'} size={22} color={Theme.WHITE} />
+      </TouchableOpacity>
       <View
         style={{
           flex: 1,
@@ -278,68 +321,3 @@ const AuditFormScreen = () => {
 };
 
 export default AuditFormScreen;
-
-const styles = StyleSheet.create({
-  mainContainer: { flex: 1, backgroundColor: Theme.WHITE },
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  step: {
-    marginBottom: 30,
-  },
-  input: {
-    borderWidth: 1,
-    padding: 10,
-    marginTop: 10,
-    borderRadius: 5,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: Dimensions.get('screen').width * 0.9,
-    alignSelf: 'center',
-  },
-  customButton: {
-    width: Dimensions.get('screen').width * 0.4,
-    margHorizontal: 5,
-    borderWidth: 0,
-    backgroundColor: Theme.SECONDARY_BLUE,
-  },
-  multiline: {
-    height: Dimensions.get('screen').height * 0.2,
-    borderWidth: 1,
-    fontSize: 16,
-    fontWeight: '400',
-    lineHeight: 22,
-    padding: 8,
-    borderRadius: 4,
-  },
-  heading: { fontWeight: '500', fontSize: 16, marginVertical: 10 },
-  info: {
-    fontWeight: '500',
-    fontSize: 12,
-    marginVertical: 10,
-    textAlign: 'right',
-  },
-  question: {
-    fontWeight: '500',
-    fontSize: 12,
-    marginVertical: 10,
-  },
-  error: {
-    color: Theme.ERROR_RED,
-    fontWeight: '500',
-    fontSize: 12,
-    marginBottom: 10,
-  },
-  history: {
-    width: Dimensions.get('screen').width * 0.9,
-    alignSelf: 'center',
-    margHorizontal: 5,
-    borderWidth: 0,
-    backgroundColor: Theme.SECONDARY_BLUE,
-  },
-  whiteColor: { color: Theme.WHITE },
-});
